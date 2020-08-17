@@ -1,0 +1,1 @@
+This is a rebrand project I worked on for my Computer Science final during the Fall of 2019.

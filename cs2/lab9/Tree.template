@@ -1,0 +1,138 @@
+template <class T>
+Tree<T>::Tree():root(NULL){}
+
+template <class T>
+Tree<T>::~Tree()
+{
+    freeMemory(root);
+    arrSize = 0;
+}
+
+template <class T>
+void Tree<T>::freeMemory(Tree::TreeNode *node)
+{
+    if (node==NULL)
+        return;
+    if (node->left)
+        freeMemory(node->left);
+    if (root->right)
+        freeMemory(node->right);
+    delete node;
+}
+
+template <class T>
+//make it return value?
+void Tree<T>::insertNode(T val)
+{
+    TreeNode * treeNode = NULL;
+    try
+    {
+        treeNode = new TreeNode(val); // handle exception necessary?
+    } catch (std::bad_alloc &exception)
+    {
+        std::cerr << "bad_alloc caught: " << exception.what() << std::endl;
+        EXIT_FAILURE;
+    }
+    TreeNode *temp=NULL;
+    TreeNode *prev=NULL;
+
+    temp = root;
+    while(temp)
+    {
+        prev = temp;
+        if (temp->data < treeNode->data)
+            temp = temp->right;
+        else
+            temp = temp->left;
+    }
+    if (prev==NULL)
+        root = treeNode;
+    else
+    {
+        if (prev->data<treeNode->data)
+            prev->right = treeNode;  // use setter function?
+        else
+            prev->left = treeNode;
+    }
+    arrSize++;
+}
+
+template <class T>
+void Tree<T>::print(TreeNode *root)
+{
+    if (root==NULL)
+        return ;
+    print(root->left);
+    std::cout << root->data << std::endl;
+    print(root->right);
+}
+
+template <class T>
+void Tree<T>::print()
+{
+    print(root);
+}
+
+template <class T>
+bool Tree<T>::isEmpty() {
+    if (arrSize==0) { return true; }
+    return false;
+}
+
+template <class T>
+bool Tree<T>::isEmpty() {
+    bool Tree::remove(T) {
+        if (root == NULL)
+            return false;
+      else {
+            if (root->getValue() == value) {
+                  TreeNode auxRoot(0);
+                  auxRoot.setLeftChild(root);
+                  TreeNode* removedNode = root->remove(value, &auxRoot);
+                  root = auxRoot.getLeft();
+                  if (removedNode != NULL) {
+                        delete removedNode;
+                        return true;
+                  } else
+                        return false;
+            } 
+            else {
+                  TreeNode* removedNode = root->remove(value, NULL);
+                  if (removedNode != NULL) {
+                        delete removedNode;
+                        return true;
+                  } else
+                        return false;
+            }
+        }
+    }
+}
+
+template <class T>
+T* Tree<T>::inOrderTraversal() {
+    T* retArr = new T[arrSize];
+    iOSize = 0;
+    inOrderHelper(root, retArr);
+    return retArr;
+}
+
+template <class T>
+void Tree<T>::inOrderHelper(TreeNode* current, T* arr) {
+    if (current==NULL)
+            return;
+    inOrderHelper(current->left, arr);
+    arr[iOSize] = current->data;
+    iOSize++;
+    inOrderHelper(current->right, arr);
+}
+
+template <class T>
+bool Tree<T>::search(T item) {
+    T* arr = this->inOrderTraversal();
+    for (int i = 0; i < arrSize; i++) {
+        if (arr[i] == item) {
+            return true;
+        }
+    }
+    return false;
+}

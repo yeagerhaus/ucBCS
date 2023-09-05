@@ -1,0 +1,97 @@
+#include <cassert>
+#include <cstdlib>
+
+PQBinaryHeap::PQBinaryHeap()
+{
+  size_ = 0;
+  capacity_ = 0;
+  heap_ = NULL;
+}
+
+PQBinaryHeap::~PQBinaryHeap()
+{
+  delete [] heap_;
+}
+
+
+void PQBinaryHeap::insert(Tuple tuple)
+{
+
+  int parent, pos;
+  
+  if (size_ == capacity_) {
+    resize();
+  }
+  heap_[++size_] = tuple;
+  pos = size_;
+  parent = pos / 2;
+  while ((parent > 0) && (heap_[parent].priority() < tuple.priority())) {
+    heap_[pos] = heap_[parent];
+    pos = parent;
+    parent = pos / 2;
+  }
+  heap_[pos] = tuple;
+}
+
+Tuple PQBinaryHeap::get_max() const
+{
+  assert(size_ > 0);
+  return heap_[1];
+}
+
+Tuple PQBinaryHeap::delete_max()
+{
+  Tuple tuple(0, "NULL");
+  
+  assert(size_ > 0);
+  tuple = heap_[1];
+  size_--;
+  if (size_ > 0) {
+    heap_[1] = heap_[size_+1];
+    heapify(1);
+  }
+  return tuple;
+}
+
+void PQBinaryHeap::heapify(int pos)
+{
+  int child;
+  Tuple tuple = heap_[pos];
+
+  while (pos * 2 <= size_) {
+    child = pos * 2;
+    if ((child != size_) && (heap_[child+1].priority() > heap_[child].priority())) {
+      child++;
+    }
+    if (heap_[child].priority() > tuple.priority()) {
+      heap_[pos] = heap_[child];
+      pos = child;
+    }
+    else {
+      break;
+    }
+  }
+  heap_[pos] = tuple;
+}
+
+void PQBinaryHeap::resize()
+{
+  Tuple *temp;
+  int i;
+  
+  if (capacity_ == 0) {
+    capacity_ = 4;
+  }
+  else {
+    capacity_ = 2 * capacity_;
+  }
+
+  temp = new Tuple[capacity_ + 1];
+  for (i=1; i<size_+1; i++) {
+    temp[i] = heap_[i];
+  }
+  if (heap_) {
+    delete [] heap_;
+  }
+  heap_ = temp;
+}
